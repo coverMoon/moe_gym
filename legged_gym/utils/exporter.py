@@ -132,7 +132,8 @@ class _TorchPolicyExporter(torch.nn.Module):
         self.history = torch.cat([self.history[:, 1:], x.unsqueeze(1)], dim=1)
         latent = self.student_encoder(self.history.flatten(1))
         x = torch.cat([latent, x], dim=1)
-        return self.actor(x), (None, latent)
+        # return self.actor(x), (None, latent)
+        return self.actor(x)
     
     def forward_moe_no_goal_cts(self, x):  # x is single observations
         x = self.normalizer(x)
@@ -140,14 +141,16 @@ class _TorchPolicyExporter(torch.nn.Module):
         history_no_goal = self.history.reshape(1, self.history_length, -1)[:, :, self.obs_no_goal_mask].reshape(1, -1)
         latent, weights = self.student_moe_encoder(self.history.flatten(1), history_no_goal)
         x = torch.cat([latent, x], dim=1)
-        return self.actor(x), (weights, latent)
+        # return self.actor(x), (weights, latent)
+        return self.actor(x)
 
     def forward_moe_cts(self, x):  # x is single observations
         x = self.normalizer(x)
         self.history = torch.cat([self.history[:, 1:], x.unsqueeze(1)], dim=1)
         latent, weights = self.student_moe_encoder(self.history.flatten(1))
         x = torch.cat([latent, x], dim=1)
-        return self.actor(x), (weights, latent)
+        # return self.actor(x), (weights, latent)
+        return self.actor(x)
     
     def forward_mcp_cts(self, x):  # x is single observations
         x = self.normalizer(x)
@@ -157,7 +160,8 @@ class _TorchPolicyExporter(torch.nn.Module):
         x = torch.cat([latent, x], dim=1)
         x_no_goal = torch.cat([latent, x_no_goal], dim=1)
         mean_action, _, weights = self.actor(x, x_no_goal)
-        return mean_action, (weights, latent)
+        # return mean_action, (weights, latent)
+        return mean_action
 
     def forward_ac_moe(self, x):  # x is single observations
         x = self.normalizer(x)
@@ -165,7 +169,8 @@ class _TorchPolicyExporter(torch.nn.Module):
         latent = self.student_encoder(self.history.flatten(1))
         x = torch.cat([latent, x], dim=1)
         mean, weights = self.actor(x)
-        return mean, (weights, latent)
+        # return mean, (weights, latent)
+        return mean
 
     def forward_dual_moe_cts(self, x):  # x is single observations
         x = self.normalizer(x)
@@ -173,7 +178,8 @@ class _TorchPolicyExporter(torch.nn.Module):
         latent, student_weights = self.student_moe_encoder(self.history.flatten(1))
         x = torch.cat([latent, x], dim=1)
         mean, actor_weights = self.actor(x)
-        return mean, (student_weights, actor_weights, latent)
+        # return mean, (student_weights, actor_weights, latent)
+        return mean
 
     @torch.jit.export
     def reset(self):
