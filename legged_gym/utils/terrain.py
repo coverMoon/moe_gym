@@ -147,7 +147,15 @@ class Terrain:
             terrain.terrain_name = "gap"
             terrain.terrain_id = 7
             gap_terrain(terrain, gap_size=gap_size, platform_size=3.)
-        else:  # 平地
+        elif len(self.proportions) >= 10 and choice < self.proportions[8]:  # 平地（10类地形时）
+            terrain.terrain_name = "flat"
+            terrain.terrain_id = 8
+            pit_terrain(terrain, depth=0.0, platform_size=4.)
+        elif len(self.proportions) >= 10:  # 高墙
+            terrain.terrain_name = "high_wall"
+            terrain.terrain_id = 9
+            high_wall_terrain(terrain, wall_height=0.30, wall_thickness=0.05, wall_x_ratio=0.70)
+        else:  # 平地（9类地形时）
             terrain.terrain_name = "flat"
             terrain.terrain_id = 8
             pit_terrain(terrain, depth=0.0, platform_size=4.)
@@ -195,3 +203,17 @@ def pit_terrain(terrain, depth, platform_size=1.):
     y1 = terrain.width // 2 - platform_size
     y2 = terrain.width // 2 + platform_size
     terrain.height_field_raw[x1:x2, y1:y2] = -depth
+
+def high_wall_terrain(terrain, wall_height=0.30, wall_thickness=0.05, wall_x_ratio=0.70):
+    """Create a single transverse high wall.
+
+    The wall is intentionally placed away from the spawn center to avoid
+    lifting env origin z (which is computed from the center area).
+    """
+    wall_h = max(1, int(np.round(wall_height / terrain.vertical_scale)))
+    wall_t = max(1, int(np.round(wall_thickness / terrain.horizontal_scale)))
+    center_x = int(np.clip(np.round(terrain.length * wall_x_ratio), wall_t, terrain.length - wall_t))
+
+    x1 = max(0, center_x - wall_t // 2)
+    x2 = min(terrain.length, x1 + wall_t)
+    terrain.height_field_raw[x1:x2, :] = wall_h

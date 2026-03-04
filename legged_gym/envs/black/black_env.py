@@ -79,8 +79,54 @@ class BlackRobot(LeggedRobot):
         return rew * dynamic_coef
 
     def _reward_body_orientation(self):
-        # Penalize roll/pitch deviation from a level body posture.
-        return torch.square(self.rpy[:, 0]) + torch.square(self.rpy[:, 1])
+        roll = self.rpy[:, 0]
+        pitch = self.rpy[:, 1]
+        deadzone_cfg = getattr(self.cfg.rewards, "body_orientation_deadzone", None)
+
+        if deadzone_cfg is not None:
+            roll_err = torch.clamp(torch.abs(roll) - float(deadzone_cfg["roll"]), min=0.0)
+            pitch_err = torch.clamp(torch.abs(pitch) - float(deadzone_cfg["pitch"]), min=0.0)
+        else:
+            roll_err = torch.abs(roll)
+            pitch_err = torch.abs(pitch)
+
+        rew = torch.square(roll_err) + torch.square(pitch_err)
+
+        dynamic_cfg = getattr(self.cfg.rewards, "body_orientation_dynamic", None)
+        if dynamic_cfg is None:
+            return rew
+
+        abs_lin_y = torch.abs(self.commands[:, 1])
+        abs_yaw = torch.abs(self.commands[:, 2])
+
+        lin_y_denom = max(dynamic_cfg["lin_vel_y_max"] - dynamic_cfg["lin_vel_y_threshold"], 1e-6)
+        yaw_denom = max(dynamic_cfg["ang_vel_yaw_max"] - dynamic_cfg["ang_vel_yaw_threshold"], 1e-6)
+        lin_y_ratio = torch.clamp((abs_lin_y - dynamic_cfg["lin_vel_y_threshold"]) / lin_y_denom, 0.0, 1.0)
+        yaw_ratio = torch.clamp((abs_yaw - dynamic_cfg["ang_vel_yaw_threshold"]) / yaw_denom, 0.0, 1.0)
+
+        # Estimate roughness from local height variance.
+        roughness_ratio = torch.zeros_like(rew)
+        if self.cfg.terrain.measure_heights:
+            heights_std = torch.std(self.measured_heights, dim=1)
+            rough_denom = max(dynamic_cfg["roughness_max"] - dynamic_cfg["roughness_threshold"], 1e-6)
+            roughness_ratio = torch.clamp((heights_std - dynamic_cfg["roughness_threshold"]) / rough_denom, 0.0, 1.0)
+
+        activity = torch.maximum(torch.maximum(lin_y_ratio, yaw_ratio), roughness_ratio)
+        min_coef = float(dynamic_cfg["min_coef"])
+        dynamic_coef = 1.0 - (1.0 - min_coef) * activity
+        return rew * dynamic_coef
+
+    def _reward_roll_bias(self):
+        if not hasattr(self, "roll_ema"):
+            self.roll_ema = torch.zeros(self.num_envs, device=self.device)
+
+        # Clear history for environments that are about to reset.
+        if hasattr(self, "reset_buf"):
+            self.roll_ema[self.reset_buf] = 0.0
+
+        alpha = float(getattr(self.cfg.rewards, "roll_bias_ema_alpha", 0.98))
+        self.roll_ema = alpha * self.roll_ema + (1.0 - alpha) * self.rpy[:, 0]
+        return torch.abs(self.roll_ema)
 
     def _reward_x_command_hip_regular(self):
         hip_dof_indices = [0, 3, 6, 9]

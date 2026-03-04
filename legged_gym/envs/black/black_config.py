@@ -108,9 +108,9 @@ class BLACKCfg(LeggedRobotCfg):
         num_cols = 20 # number of terrain cols (types)
         terrain_spacing = 0.5 # spacing between different terrain types [m]
 
-        # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat]
+        # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat, high_wall]
         # terrain_proportions = [0.2, 0.05, 0.05, 0.30, 0.05, 0.25, 0.0, 0.0, 0.1]  # 更偏向wave
-        terrain_proportions = [0.05, 0.20, 0.05, 0.25, 0.10, 0.20, 0.0, 0.0, 0.15]  # 这个更偏向平地斜坡
+        terrain_proportions = [0.05, 0.20, 0.05, 0.30, 0.10, 0.20, 0.0, 0.0, 0.05, 0.05]  # 加入 high_wall(30cm, 5cm)
         # terrain_proportions = [0.20, 0.05, 0.05, 0.30, 0.15, 0.20, 0.0, 0.0, 0.05]  # 更偏向wave和stairs
         # terrain_proportions = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
         # terrain_proportions = [0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
@@ -150,7 +150,7 @@ class BLACKCfg(LeggedRobotCfg):
             "backflip": 5.0,
             "sideflip": 3.0,
         }
-        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, gap, flat]
+        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, gap, flat, high_wall]
         terrain_max_command_ranges = [
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # wave
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # slope
@@ -161,6 +161,7 @@ class BLACKCfg(LeggedRobotCfg):
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # stepping stones
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # gap
             {'lin_vel_x': [-2.0, 2.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-2.0, 2.0], 'heading': [-1.57, 1.57]},  # flat
+            {'lin_vel_x': [-0.8, 0.8], 'lin_vel_y': [-0.6, 0.6], 'ang_vel_yaw': [-1.0, 1.0], 'heading': [-1.57, 1.57]},  # high_wall
         ]
 
         class ranges:
@@ -209,6 +210,24 @@ class BLACKCfg(LeggedRobotCfg):
             "ang_vel_yaw_threshold": 0.2,# start reducing beyond this |ang_vel_yaw|
             "ang_vel_yaw_max": 1.5,      # full yaw contribution at this |ang_vel_yaw|
         }
+        # Deadzone around level pose so tiny tilt does not get over-penalized.
+        body_orientation_deadzone = {
+            "roll": 0.08,   # rad
+            "pitch": 0.10,  # rad
+        }
+        # Dynamic coefficient for body orientation penalty.
+        # Reduce penalty under side/yaw commands and rough terrain.
+        body_orientation_dynamic = {
+            "min_coef": 0.30,
+            "lin_vel_y_threshold": 0.10,
+            "lin_vel_y_max": 1.00,
+            "ang_vel_yaw_threshold": 0.20,
+            "ang_vel_yaw_max": 1.50,
+            "roughness_threshold": 0.02,
+            "roughness_max": 0.10,
+        }
+        # Persistent roll-bias penalty (EMA roll).
+        roll_bias_ema_alpha = 0.99
         class scales:
             tracking_lin_vel = 1.0
             tracking_ang_vel = 0.5
@@ -220,7 +239,8 @@ class BLACKCfg(LeggedRobotCfg):
             correct_base_height = -1.0
             action_rate = -0.01
             action_smoothness = -0.01
-            body_orientation = -0.2
+            body_orientation = -2.0
+            roll_bias = -0.05
             collision = -1.0
             dof_pos_limits = -2.0
             feet_regulation = -0.05
