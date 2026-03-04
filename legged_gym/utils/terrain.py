@@ -154,7 +154,7 @@ class Terrain:
         elif len(self.proportions) >= 10:  # 高墙
             terrain.terrain_name = "high_wall"
             terrain.terrain_id = 9
-            high_wall_terrain(terrain, wall_height=0.30, wall_thickness=0.05, wall_x_ratio=0.70)
+            high_wall_terrain(terrain, wall_height=0.30, wall_thickness=0.10, wall_x_ratio=0.70)
         else:  # 平地（9类地形时）
             terrain.terrain_name = "flat"
             terrain.terrain_id = 8
@@ -204,7 +204,7 @@ def pit_terrain(terrain, depth, platform_size=1.):
     y2 = terrain.width // 2 + platform_size
     terrain.height_field_raw[x1:x2, y1:y2] = -depth
 
-def high_wall_terrain(terrain, wall_height=0.30, wall_thickness=0.05, wall_x_ratio=0.70):
+def high_wall_terrain(terrain, wall_height=0.30, wall_thickness=0.10, wall_x_ratio=0.70):
     """Create a single transverse high wall.
 
     The wall is intentionally placed away from the spawn center to avoid

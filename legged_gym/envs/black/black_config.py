@@ -110,7 +110,7 @@ class BLACKCfg(LeggedRobotCfg):
 
         # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat, high_wall]
         # terrain_proportions = [0.2, 0.05, 0.05, 0.30, 0.05, 0.25, 0.0, 0.0, 0.1]  # 更偏向wave
-        terrain_proportions = [0.05, 0.20, 0.05, 0.30, 0.10, 0.20, 0.0, 0.0, 0.05, 0.05]  # 加入 high_wall(30cm, 5cm)
+        terrain_proportions = [0.05, 0.2, 0.05, 0.25, 0.10, 0.10, 0.0, 0.0, 0.1, 0.2]  # 加入 high_wall(30cm, 5cm)
         # terrain_proportions = [0.20, 0.05, 0.05, 0.30, 0.15, 0.20, 0.0, 0.0, 0.05]  # 更偏向wave和stairs
         # terrain_proportions = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
         # terrain_proportions = [0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
