@@ -102,8 +102,10 @@ class Terrain:
             step_height = 0.05 + 0.18 * difficulty  # max: 0.212 m
             discrete_obstacles_height = 0.05 + difficulty * 0.2  # max: 0.23 m
 
-        stepping_stones_size = 1.5 * (1.05 - difficulty)
-        stone_distance = 0.05 if difficulty==0 else 0.1
+        # Stepping-stones curriculum focuses on crossing gaps:
+        # keep stones relatively large, increase gap size with difficulty.
+        stepping_stones_size = 1.25 - 0.60 * difficulty
+        stone_distance = 0.10 + 0.12 * difficulty
         gap_size = 1. * difficulty
         # pit_depth = 1. * difficulty  # 删除坑洞
         amplitude = 0.1 + 0.2 * difficulty
@@ -142,7 +144,7 @@ class Terrain:
         elif choice < self.proportions[6]:  # 梅花桩
             terrain.terrain_name = "stepping_stones"
             terrain.terrain_id = 6
-            terrain_utils.stepping_stones_terrain(terrain, stone_size=stepping_stones_size, stone_distance=stone_distance, max_height=0., platform_size=4.)
+            terrain_utils.stepping_stones_terrain(terrain, stone_size=stepping_stones_size, stone_distance=stone_distance, max_height=0., platform_size=2.4)
         elif choice < self.proportions[7]:  # 间隙
             terrain.terrain_name = "gap"
             terrain.terrain_id = 7
