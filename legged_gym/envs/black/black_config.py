@@ -108,9 +108,9 @@ class BLACKCfg(LeggedRobotCfg):
         num_cols = 20 # number of terrain cols (types)
         terrain_spacing = 0.5 # spacing between different terrain types [m]
 
-        # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat, high_wall]
+        # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, plank_bridge, flat, high_wall]
         # terrain_proportions = [0.2, 0.05, 0.05, 0.30, 0.05, 0.25, 0.0, 0.0, 0.1]  # 更偏向wave
-        terrain_proportions = [0.05, 0.20, 0.05, 0.25, 0.10, 0.15, 0.10, 0.0, 0.10, 0.0]  # 加入 high_wall(30cm, 10cm)
+        terrain_proportions = [0.05, 0.20, 0.05, 0.25, 0.10, 0.15, 0.0, 0.10, 0.10, 0.0]  # 加入 plank_bridge
         # terrain_proportions = [0.20, 0.05, 0.05, 0.30, 0.15, 0.20, 0.0, 0.0, 0.05]  # 更偏向wave和stairs
         # terrain_proportions = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
         # terrain_proportions = [0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
@@ -150,7 +150,7 @@ class BLACKCfg(LeggedRobotCfg):
             "backflip": 5.0,
             "sideflip": 3.0,
         }
-        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, gap, flat, high_wall]
+        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, plank_bridge, flat, high_wall]
         terrain_max_command_ranges = [
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # wave
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # slope
@@ -159,7 +159,7 @@ class BLACKCfg(LeggedRobotCfg):
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # stairs down
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # obstacles
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # stepping stones
-            {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # gap
+            {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-0.4, 0.4], 'ang_vel_yaw': [-0.8, 0.8], 'heading': [-1.0, 1.0]},  # plank_bridge
             {'lin_vel_x': [-2.0, 2.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-2.0, 2.0], 'heading': [-1.57, 1.57]},  # flat
             {'lin_vel_x': [-0.8, 0.8], 'lin_vel_y': [-0.6, 0.6], 'ang_vel_yaw': [-1.0, 1.0], 'heading': [-1.57, 1.57]},  # high_wall
         ]
@@ -196,7 +196,7 @@ class BLACKCfg(LeggedRobotCfg):
             "max_lin_vel": 1.5, # max abs linear velocity to have max sigma
             "min_ang_vel": 1.0, # min abs angular velocity to have default sigma
             "max_ang_vel": 2.0, # max abs angular velocity to have max sigma
-            # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat, high_wall]
+            # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, plank_bridge, flat, high_wall]
             # "max_sigma": [1/3, 1/4, 1/4, 1/2.7, 1/2.7, 1/2, 1, 1, 1/4]
             "max_sigma": [5/12, 1/4, 1/4, 1/2, 1/2, 3/4, 1, 1, 1/4, 1/2]
         }

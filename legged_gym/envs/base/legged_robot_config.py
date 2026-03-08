@@ -34,7 +34,7 @@ class LeggedRobotCfg(BaseConfig):
         num_cols = 20 # number of terrain cols (types)
         terrain_spacing = 0.5 # spacing between different terrain types [m]
 
-        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, gap, flat]
+        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, plank_bridge, flat]
         terrain_proportions = [0.1, 0.1, 0.1, 0.2, 0.2, 0.1, 0.1, 0.1, 0.0]
         # trimesh only:
         slope_treshold = 0.75 # slopes above this threshold will be corrected to vertical surfaces
@@ -67,7 +67,7 @@ class LeggedRobotCfg(BaseConfig):
             "backflip": 5.0,
             "sideflip": 3.0,
         }
-        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, gap, flat]
+        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, plank_bridge, flat]
         terrain_max_command_ranges = [
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.5, 1.5], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # wave
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.5, 1.5], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # slope
@@ -76,7 +76,7 @@ class LeggedRobotCfg(BaseConfig):
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # stairs down
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # obstacles
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # stepping stones
-            {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # gap
+            {'lin_vel_x': [-0.6, 0.6], 'lin_vel_y': [-0.4, 0.4], 'ang_vel_yaw': [-0.8, 0.8], 'heading': [-1.0, 1.0]},  # plank_bridge
             {'lin_vel_x': [-2.0, 2.0], 'lin_vel_y': [-1.5, 1.5], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # flat
         ]
 
@@ -206,7 +206,7 @@ class LeggedRobotCfg(BaseConfig):
         # eg: {
         #     "min_vel": 0.5, # min abs velocity to have default sigma
         #     "max_vel": 1.0, # max abs velocity to have max sigma
-        #     # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat]
+        #     # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, plank_bridge, flat]
         #     "max_sigma": [1/3, 1/4, 1/4, 1/2.7, 1/2.7, 1/2, 1, 1, 1/4]
         # }
         turn_over_roll_threshold = math.pi / 4 # threshold on roll to use turn over rewards

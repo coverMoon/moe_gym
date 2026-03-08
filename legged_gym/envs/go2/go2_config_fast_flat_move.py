@@ -97,9 +97,9 @@ class GO2Cfg(LeggedRobotCfg):
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = 'plane'
         max_init_terrain_level = 5
-        # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat]
+        # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, plank_bridge, flat]
         # terrain_proportions = [0.2, 0.05, 0.05, 0.30, 0.05, 0.25, 0.0, 0.0, 0.1]  # 更偏向wave
-        terrain_proportions = [0.05, 0.20, 0.05, 0.25, 0.10, 0.20, 0.0, 0.0, 0.15]  # 这个更偏向平地斜坡
+        terrain_proportions = [0.05, 0.20, 0.05, 0.25, 0.10, 0.20, 0.05, 0.05, 0.05]  # 这个更偏向平地斜坡
         # terrain_proportions = [0.20, 0.05, 0.05, 0.30, 0.15, 0.20, 0.0, 0.0, 0.05]  # 更偏向wave和stairs
         # terrain_proportions = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
         # terrain_proportions = [0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
@@ -156,7 +156,7 @@ class GO2Cfg(LeggedRobotCfg):
             "backflip": 5.0,
             "sideflip": 3.0,
         }
-        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, gap, flat]
+        # [wave, slope, rough slope, stairs up, stairs down, obstacles, stepping stones, plank_bridge, flat]
         terrain_max_command_ranges = [
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # wave
             {'lin_vel_x': [-1.5, 1.5], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # slope
@@ -165,7 +165,7 @@ class GO2Cfg(LeggedRobotCfg):
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # stairs down
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # obstacles
             {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # stepping stones
-            {'lin_vel_x': [-1.0, 1.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-1.5, 1.5], 'heading': [-1.57, 1.57]},  # gap
+            {'lin_vel_x': [-0.6, 0.6], 'lin_vel_y': [-0.4, 0.4], 'ang_vel_yaw': [-0.8, 0.8], 'heading': [-1.0, 1.0]},  # plank_bridge
             {'lin_vel_x': [-2.0, 2.0], 'lin_vel_y': [-1.0, 1.0], 'ang_vel_yaw': [-2.0, 2.0], 'heading': [-1.57, 1.57]},  # flat
         ]
 
@@ -200,7 +200,7 @@ class GO2Cfg(LeggedRobotCfg):
             "max_lin_vel": 1.5, # max abs linear velocity to have max sigma
             "min_ang_vel": 1.0, # min abs angular velocity to have default sigma
             "max_ang_vel": 2.0, # max abs angular velocity to have max sigma
-            # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat]
+            # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, plank_bridge, flat]
             # "max_sigma": [1/3, 1/4, 1/4, 1/2.7, 1/2.7, 1/2, 1, 1, 1/4]
             "max_sigma": [5/12, 1/4, 1/4, 1/2, 1/2, 3/4, 1, 1, 1/4]
         }
