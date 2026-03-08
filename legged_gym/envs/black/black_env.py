@@ -128,15 +128,37 @@ class BlackRobot(LeggedRobot):
         self.roll_ema = alpha * self.roll_ema + (1.0 - alpha) * self.rpy[:, 0]
         return torch.abs(self.roll_ema)
 
+    def _reward_stand_still(self):
+        # Penalize motion at zero commands
+        # 判定静止条件（平移和旋转命令都接近零）
+        is_still = (
+            (torch.norm(self.commands[:, :2], dim=1) < 0.1)
+            & (torch.abs(self.commands[:, 2]) < 0.2)
+        )
+
+        # 计算位置误差
+        pos_error = torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1)
+
+        # 计算速度误差
+        vel_error = torch.sum(torch.abs(self.dof_vel), dim=1)
+
+        # 组合误差
+        error = pos_error + 0.05 * vel_error
+    
+        return error * is_still
+
     def _reward_x_command_hip_regular(self):
         hip_dof_indices = [0, 3, 6, 9]
         hip_pos = self.dof_pos[:, hip_dof_indices]
         cmd_norm = torch.norm(self.commands[:, :3], dim=1)
         # Avoid NaNs when command norm is near zero.
-        x_command_ratio = torch.where(
+        base_ratio = torch.where(
             cmd_norm > 1e-6,
             torch.abs(self.commands[:, 0]) / torch.clamp_min(cmd_norm, 1e-6),
             torch.zeros_like(cmd_norm),
         )
+        # Keep a minimum penalty under mixed commands (x+y/yaw), so
+        # anti-symmetric-hip regularization does not vanish on stairs.
+        x_command_ratio = 0.2 + 0.8 * base_ratio
         rew = torch.abs(hip_pos[:,0]+hip_pos[:,1]) + torch.abs(hip_pos[:,2]+hip_pos[:,3])
         return rew * x_command_ratio

@@ -110,7 +110,7 @@ class BLACKCfg(LeggedRobotCfg):
 
         # [wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat, high_wall]
         # terrain_proportions = [0.2, 0.05, 0.05, 0.30, 0.05, 0.25, 0.0, 0.0, 0.1]  # 更偏向wave
-        terrain_proportions = [0.05, 0.2, 0.05, 0.25, 0.10, 0.10, 0.0, 0.0, 0.1, 0.2]  # 加入 high_wall(30cm, 5cm)
+        terrain_proportions = [0.05, 0.20, 0.05, 0.25, 0.10, 0.15, 0.0, 0.0, 0.10, 0.10]  # 加入 high_wall(30cm, 10cm)
         # terrain_proportions = [0.20, 0.05, 0.05, 0.30, 0.15, 0.20, 0.0, 0.0, 0.05]  # 更偏向wave和stairs
         # terrain_proportions = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
         # terrain_proportions = [0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
@@ -196,40 +196,40 @@ class BLACKCfg(LeggedRobotCfg):
             "max_lin_vel": 1.5, # max abs linear velocity to have max sigma
             "min_ang_vel": 1.0, # min abs angular velocity to have default sigma
             "max_ang_vel": 2.0, # max abs angular velocity to have max sigma
-            # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat]
+            # wave, slope, rough_slope, stairs up, stairs down, obstacles, stepping_stones, gap, flat, high_wall]
             # "max_sigma": [1/3, 1/4, 1/4, 1/2.7, 1/2.7, 1/2, 1, 1, 1/4]
-            "max_sigma": [5/12, 1/4, 1/4, 1/2, 1/2, 3/4, 1, 1, 1/4]
+            "max_sigma": [5/12, 1/4, 1/4, 1/2, 1/2, 3/4, 1, 1, 1/4, 1/2]
         }
         min_legs_distance = 0.1  # min distance between legs to not be considered stumbling
         # Dynamic coefficient for hip_to_default reward:
         # reduce penalty when lateral/yaw commands are active.
         hip_to_default_dynamic = {
-            "min_coef": 0.05,            # minimum multiplier at high lateral+yaw command
+            "min_coef": 0.2,            # minimum multiplier at high lateral+yaw command
             "lin_vel_y_threshold": 0.1,  # start reducing beyond this |lin_vel_y|
             "lin_vel_y_max": 1.0,        # full lateral contribution at this |lin_vel_y|
             "ang_vel_yaw_threshold": 0.2,# start reducing beyond this |ang_vel_yaw|
-            "ang_vel_yaw_max": 1.5,      # full yaw contribution at this |ang_vel_yaw|
+            "ang_vel_yaw_max": 3.0,      # full yaw contribution at this |ang_vel_yaw|
         }
         # Deadzone around level pose so tiny tilt does not get over-penalized.
         body_orientation_deadzone = {
-            "roll": 0.08,   # rad
+            "roll": 0.05,   # rad
             "pitch": 0.10,  # rad
         }
         # Dynamic coefficient for body orientation penalty.
         # Reduce penalty under side/yaw commands and rough terrain.
         body_orientation_dynamic = {
-            "min_coef": 0.30,
+            "min_coef": 0.50,
             "lin_vel_y_threshold": 0.10,
             "lin_vel_y_max": 1.00,
             "ang_vel_yaw_threshold": 0.20,
-            "ang_vel_yaw_max": 1.50,
+            "ang_vel_yaw_max": 3.00,
             "roughness_threshold": 0.02,
             "roughness_max": 0.10,
         }
         # Persistent roll-bias penalty (EMA roll).
-        roll_bias_ema_alpha = 0.99
+        roll_bias_ema_alpha = 0.98
         class scales:
-            tracking_lin_vel = 1.0
+            tracking_lin_vel = 1.5
             tracking_ang_vel = 0.5
             lin_vel_z = -2.0
             ang_vel_xy = -0.05
@@ -237,19 +237,20 @@ class BLACKCfg(LeggedRobotCfg):
             dof_power = -2e-5
             torques = -1e-4
             correct_base_height = -1.0
-            action_rate = -0.01
-            action_smoothness = -0.01
-            body_orientation = -2.0
-            roll_bias = -0.05
+            action_rate = -0.015
+            action_smoothness = -0.02
+            stand_still = -1.0
+            body_orientation = -1.5
+            roll_bias = -2.0
             collision = -1.0
             dof_pos_limits = -2.0
             feet_regulation = -0.05
-            x_command_hip_regular = -1.0
+            x_command_hip_regular = -0.15
             # CTS reward trains to have very close feet distance, real robot performance is poor, but sim2sim can climb 20cm stairs, try to add hip_to_default reward or similar_to_default reward
             # training to y=1.5, font feet will collide noticeably, max y=1.0
-            hip_to_default = -0.3
+            hip_to_default = -0.12
             # legs_distance = -1.5  # not good performance, avoid leg collision
-            similar_to_default = -0.01
+            # similar_to_default = -0.01
             # feet_contact_forces = -1.0  # try to add but no effect, remove
 
         turn_over_roll_threshold = math.pi / 4 # threshold on roll to use turn over rewards
